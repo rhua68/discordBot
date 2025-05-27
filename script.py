@@ -331,25 +331,34 @@ async def background_check():
                         last_status[0] < max_enrollment and seats_left > 0
                     ):
                         messages.append(
-                            f"🚨 Class Alert! {seats_left} seat(s) available for {unquote(watch['Dept'])} {watch['CourseNum']} {watch['SectionType']} {watch['SectionCode']}."
+                            f"🚨 Class Alert! 🚨{seats_left} seat(s) available for {unquote(watch['Dept'])} {watch['CourseNum']} {watch['SectionType']} {watch['SectionCode']}."
                         )
 
                     if (
                         last_status
-                        and watch["WaitlistPos"] < last_status[1]
+                        and waitlist < last_status[1]
                         and waitlist > 0
                     ):
                         messages.append(
-                            f"🔼 You moved up the waitlist for {watch['Dept']} {watch['CourseNum']}! New position: {waitlist}."
+                            f"🔼 The waitlist for {watch['Dept']} {watch['CourseNum']} has decreased. New waitlist: {waitlist}."
                         )
 
                     if (
-                        watch["WaitlistPos"] == 0
+                        last_status
+                        and waitlist > last_status[1]
+                        and waitlist > 0
+                    ):
+                        messages.append(
+                            f"🔽 The waitlist for {watch['Dept']} {watch['CourseNum']} has increased. New waitlist: {waitlist}."
+                        )
+
+                    if (
+                        waitlist == 0
                         and enrollment == max_enrollment
                         and (last_status is None or last_status[1] != 0)
                     ):
                         messages.append(
-                            f"🎉 Congrats! You are off the waitlist for {watch['Dept']} {watch['CourseNum']}!"
+                            f"🚨 HURRY 🚨 the waitlist for {watch['Dept']} {watch['CourseNum']} is OPEN and NO-ONE is currently signed up!"
                         )
 
                     for msg in messages:
