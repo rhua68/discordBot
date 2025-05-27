@@ -20,9 +20,9 @@ last_statuses = {}  # keep track of last status for each user
 # --- Config ---
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+CHANNEL_ID= os.getenv("CHANNEL_ID")
 
-
-CHANNEL_ID = 1375024217405390973  # Replace with your channel ID (integer)
+  # Replace with your channel ID (integer)
 CHECK_INTERVAL = 300  # in seconds (5 minutes)
 
 
@@ -196,6 +196,13 @@ async def course_exists(year: int, quarter_code: str,
 
     return False             # ❌ not found
 
+import aiohttp
+
+async def fetch_page_text(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            response.raise_for_status()  # Optional: raise if bad status
+            return await response.text()
 
 
 def handle_quarter(quarter):
@@ -301,7 +308,8 @@ async def background_check():
                     watch["CourseNum"],
                 )
                 print(f"Fetching URL for {watch['Dept']} {watch['CourseNum']} - {url}")
-                page_text = requests.get(url).text
+                page_text = await fetch_page_text(url)
+
 
                 enrollment, waitlist, max_enrollment = parse_enrollment_and_waitlist(
                     page_text, watch["SectionType"], watch["SectionCode"]
@@ -530,8 +538,8 @@ async def status(interaction: discord.Interaction, wclass: str):
     url = construct_url(watch["Year"], watch["Quarter"], watch["Dept"], watch["CourseNum"])
     
     # Ideally, use async HTTP client here, or run blocking in executor:
-    loop = asyncio.get_running_loop()
-    page_text = await loop.run_in_executor(None, lambda: requests.get(url).text)
+    page_text = await fetch_page_text(url)
+
     
     enrollment, waitlist, max_enrollment = parse_enrollment_and_waitlist(
         page_text, watch["SectionType"], watch["SectionCode"]
