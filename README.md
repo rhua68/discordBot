@@ -1,5 +1,8 @@
 Deployed on railway for about a month through their free service. Have not implemented a backend to store individual users data. (Mostly looking at mySQL)
 
+**How it works**
+There are query links through UCI's public class registration links. Whenever a user wants to add a class to their watchlist, it saves the unique link to their account and scrapes/refreshes the page to notice any changes every 5 minutes. When the script detects a change, it pushes notifications to user and updates their position on waitlist. 
+
 **Commands for discord bot**
 <img width="965" height="424" alt="image" src="https://github.com/user-attachments/assets/9f5600be-b4fe-48b4-9240-552604845e6d" />
 **Adding courses to watchlist**
